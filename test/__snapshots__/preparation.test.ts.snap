@@ -1,0 +1,570 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SQS Queue Created 1`] = `
+{
+  "Outputs": {
+    "ProcessorApiEndpoint204FEF6F": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Ref": "ProcessorApiEE88D53F",
+            },
+            ".execute-api.",
+            {
+              "Ref": "AWS::Region",
+            },
+            ".",
+            {
+              "Ref": "AWS::URLSuffix",
+            },
+            "/",
+            {
+              "Ref": "ProcessorApiDeploymentStageprod67007E1E",
+            },
+            "/",
+          ],
+        ],
+      },
+    },
+    "RESTApiEndpoint": {
+      "Value": "https://\${api.restApiId}.execute-api.eu-central-1.amazonaws.com/prod/processJSON",
+    },
+  },
+  "Resources": {
+    "ErrorSubstription0789D627": {
+      "Properties": {
+        "Endpoint": "htaushanov@yahoo.com",
+        "Protocol": "email",
+        "TopicArn": {
+          "Ref": "ErrorTopicA0904A23",
+        },
+      },
+      "Type": "AWS::SNS::Subscription",
+    },
+    "ErrorTableA27F7F12": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "id",
+            "AttributeType": "S",
+          },
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "KeySchema": [
+          {
+            "AttributeName": "id",
+            "KeyType": "HASH",
+          },
+        ],
+        "StreamSpecification": {
+          "StreamViewType": "NEW_AND_OLD_IMAGES",
+        },
+        "TimeToLiveSpecification": {
+          "AttributeName": "ttl",
+          "Enabled": true,
+        },
+      },
+      "Type": "AWS::DynamoDB::Table",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ErrorTopicA0904A23": {
+      "Properties": {
+        "TopicName": "ErrorTopic",
+      },
+      "Type": "AWS::SNS::Topic",
+    },
+    "ProcessorApiAccountF381269B": {
+      "DeletionPolicy": "Retain",
+      "DependsOn": [
+        "ProcessorApiEE88D53F",
+      ],
+      "Properties": {
+        "CloudWatchRoleArn": {
+          "Fn::GetAtt": [
+            "ProcessorApiCloudWatchRole42FFAC5A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::ApiGateway::Account",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ProcessorApiCloudWatchRole42FFAC5A": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "apigateway.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ProcessorApiDeploymentE2352F460c4a8d5edf6ee8f67aca6a8f8e418301": {
+      "DependsOn": [
+        "ProcessorApiprocessJASONPOST2510B51A",
+        "ProcessorApiprocessJASON7BA9EF0D",
+      ],
+      "Properties": {
+        "Description": "Automatically created by the RestApi construct",
+        "RestApiId": {
+          "Ref": "ProcessorApiEE88D53F",
+        },
+      },
+      "Type": "AWS::ApiGateway::Deployment",
+    },
+    "ProcessorApiDeploymentStageprod67007E1E": {
+      "DependsOn": [
+        "ProcessorApiAccountF381269B",
+      ],
+      "Properties": {
+        "DeploymentId": {
+          "Ref": "ProcessorApiDeploymentE2352F460c4a8d5edf6ee8f67aca6a8f8e418301",
+        },
+        "RestApiId": {
+          "Ref": "ProcessorApiEE88D53F",
+        },
+        "StageName": "prod",
+      },
+      "Type": "AWS::ApiGateway::Stage",
+    },
+    "ProcessorApiEE88D53F": {
+      "Properties": {
+        "Name": "ProcessorApi",
+      },
+      "Type": "AWS::ApiGateway::RestApi",
+    },
+    "ProcessorApiprocessJASON7BA9EF0D": {
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": [
+            "ProcessorApiEE88D53F",
+            "RootResourceId",
+          ],
+        },
+        "PathPart": "processJASON",
+        "RestApiId": {
+          "Ref": "ProcessorApiEE88D53F",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+    },
+    "ProcessorApiprocessJASONPOST2510B51A": {
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "POST",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region",
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "processFunction0BCCD85F",
+                    "Arn",
+                  ],
+                },
+                "/invocations",
+              ],
+            ],
+          },
+        },
+        "ResourceId": {
+          "Ref": "ProcessorApiprocessJASON7BA9EF0D",
+        },
+        "RestApiId": {
+          "Ref": "ProcessorApiEE88D53F",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+    },
+    "ProcessorApiprocessJASONPOSTApiPermissionMyTestStackProcessorApi3048F77APOSTprocessJASON650142CB": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "processFunction0BCCD85F",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              {
+                "Ref": "ProcessorApiEE88D53F",
+              },
+              "/",
+              {
+                "Ref": "ProcessorApiDeploymentStageprod67007E1E",
+              },
+              "/POST/processJASON",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ProcessorApiprocessJASONPOSTApiPermissionTestMyTestStackProcessorApi3048F77APOSTprocessJASON37BB8D4E": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "processFunction0BCCD85F",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              {
+                "Ref": "ProcessorApiEE88D53F",
+              },
+              "/test-invoke-stage/POST/processJASON",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "cleanupFunction808DE61E": {
+      "DependsOn": [
+        "cleanupFunctionServiceRoleDefaultPolicy8DA0A82F",
+        "cleanupFunctionServiceRoleF2D5398B",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "81e3ccd2a84477987c605d4f9feb1d2d4c531bd6bd27c43f4d14f1c0fabff891.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "TABLE_NAME": {
+              "Ref": "ErrorTableA27F7F12",
+            },
+            "TOPIC_ARN": {
+              "Ref": "ErrorTopicA0904A23",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "cleanupFunctionServiceRoleF2D5398B",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs20.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "cleanupFunctionDynamoDBEventSourceMyTestStackErrorTable4C851020853C5C12": {
+      "Properties": {
+        "BatchSize": 5,
+        "EventSourceArn": {
+          "Fn::GetAtt": [
+            "ErrorTableA27F7F12",
+            "StreamArn",
+          ],
+        },
+        "FilterCriteria": {
+          "Filters": [
+            {
+              "Pattern": "{"eventName":["REMOVE"]}",
+            },
+          ],
+        },
+        "FunctionName": {
+          "Ref": "cleanupFunction808DE61E",
+        },
+        "StartingPosition": "LATEST",
+      },
+      "Type": "AWS::Lambda::EventSourceMapping",
+    },
+    "cleanupFunctionServiceRoleDefaultPolicy8DA0A82F": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sns:Publish",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "ErrorTopicA0904A23",
+              },
+            },
+            {
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ErrorTableA27F7F12",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+            {
+              "Action": "dynamodb:ListStreams",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "dynamodb:DescribeStream",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ErrorTableA27F7F12",
+                  "StreamArn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "cleanupFunctionServiceRoleDefaultPolicy8DA0A82F",
+        "Roles": [
+          {
+            "Ref": "cleanupFunctionServiceRoleF2D5398B",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "cleanupFunctionServiceRoleF2D5398B": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "processFunction0BCCD85F": {
+      "DependsOn": [
+        "processFunctionServiceRoleDefaultPolicyE4A30A49",
+        "processFunctionServiceRole043D3FAD",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "e6eecc54ed9925effa284524261516df6f3c27f2473cf563740eea67abd194b3.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "TABLE_NAME": {
+              "Ref": "ErrorTableA27F7F12",
+            },
+            "TOPIC_ARN": {
+              "Ref": "ErrorTopicA0904A23",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "processFunctionServiceRole043D3FAD",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs20.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "processFunctionServiceRole043D3FAD": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "processFunctionServiceRoleDefaultPolicyE4A30A49": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sns:Publish",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "ErrorTopicA0904A23",
+              },
+            },
+            {
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ErrorTableA27F7F12",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "processFunctionServiceRoleDefaultPolicyE4A30A49",
+        "Roles": [
+          {
+            "Ref": "processFunctionServiceRole043D3FAD",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+  },
+}
+`;
