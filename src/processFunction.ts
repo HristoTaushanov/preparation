@@ -40,7 +40,7 @@ export const handler = async (event: any) => {
         // Publish to SNS
         await snsClient.send(new PublishCommand( {
             TopicArn: topicArn,
-            Message: `Valid JSON received: ${event.text}`
+            Message: `Valid JSON received: ${body.text}`
             }
         ));
         console.log('Notification sent!')
