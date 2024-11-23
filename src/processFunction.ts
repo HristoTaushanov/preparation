@@ -1,3 +1,10 @@
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { SNSClient } from "@aws-sdk/client-sns";
+
+
+const snsClient = new SNSClient({});
+const dynamoDBClient = new DynamoDBClient({});
+
 export const handler = async (event: any) => {
     const tableName = process.env.TABLE_NAME;
 
