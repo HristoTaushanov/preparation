@@ -34,9 +34,21 @@ export class PreparationStack extends cdk.Stack {
       }
     });
 
+    const cleanupFunction = new NodejsFunction(this, 'cleanupFunction', {
+      runtime: Runtime.NODEJS_20_X,
+      handler: 'handler',
+      entry: '${__dirname}/../src/cleanupFunction.ts',
+      environment: {
+        TABLE_NAME: errorTable.tableName,
+        TOPIC_ARN: errorTopic.topicArn
+      }
+    });
+
 
     errorTopic.grantPublish(processFunction);
+    errorTopic.grantPublish(cleanupFunction);
     errorTable.grantReadWriteData(processFunction);
+    errorTable.grantReadWriteData(cleanupFunction);
 
     const api = new RestApi(this, 'ProcessorApi');
     const resource = api.root.addResource('processJASON');
