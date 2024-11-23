@@ -16,7 +16,8 @@ export class PreparationStack extends cdk.Stack {
         name: 'id',
         type: AttributeType.STRING
       },
-      billingMode: BillingMode.PAY_PER_REQUEST
+      billingMode: BillingMode.PAY_PER_REQUEST,
+      timeToLiveAttribute: 'ttl'
     });
 
     const errorTopic = new Topic(this, 'ErrorTopic', {
