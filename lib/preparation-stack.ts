@@ -2,7 +2,7 @@
 import * as cdk from 'aws-cdk-lib';
 import { LambdaIntegration, RestApi } from 'aws-cdk-lib/aws-apigateway';
 import { AttributeType, BillingMode, StreamViewType, Table } from 'aws-cdk-lib/aws-dynamodb';
-import { Runtime, StartingPosition } from 'aws-cdk-lib/aws-lambda';
+import { FilterCriteria, FilterRule, Runtime, StartingPosition } from 'aws-cdk-lib/aws-lambda';
 import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Subscription, SubscriptionProtocol, Topic } from 'aws-cdk-lib/aws-sns';
@@ -65,7 +65,12 @@ export class PreparationStack extends cdk.Stack {
 
     cleanupFunction.addEventSource(new DynamoEventSource(errorTable, {
       startingPosition: StartingPosition.LATEST,
-      batchSize: 5
+      batchSize: 5,
+      filters: [
+          FilterCriteria.filter({
+            eventName: FilterRule.isEqual('REMOVE'),
+          })
+      ]
     }));
 
     new cdk.CfnOutput(this, 'RESTApiEndpoint', {
