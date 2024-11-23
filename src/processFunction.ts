@@ -1,5 +1,6 @@
 import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 import { PublishCommand, SNSClient } from "@aws-sdk/client-sns";
+import { v4 } from "uuid";
 
 
 const snsClient = new SNSClient({});
@@ -24,7 +25,7 @@ export const handler = async (event: any) => {
                 TableName: tableName,
                 Item: {
                     id: {
-                        S: Math.random().toString(),
+                        S: v4(),
                     },
                     errorMessage: {
                         S: 'Something is wrong!',
