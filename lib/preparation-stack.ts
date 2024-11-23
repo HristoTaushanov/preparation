@@ -1,7 +1,9 @@
+
 import * as cdk from 'aws-cdk-lib';
 import { LambdaIntegration, RestApi } from 'aws-cdk-lib/aws-apigateway';
-import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
-import { Runtime } from 'aws-cdk-lib/aws-lambda';
+import { AttributeType, BillingMode, StreamViewType, Table } from 'aws-cdk-lib/aws-dynamodb';
+import { Runtime, StartingPosition } from 'aws-cdk-lib/aws-lambda';
+import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Subscription, SubscriptionProtocol, Topic } from 'aws-cdk-lib/aws-sns';
 import { Construct } from 'constructs';
@@ -17,7 +19,8 @@ export class PreparationStack extends cdk.Stack {
         type: AttributeType.STRING
       },
       billingMode: BillingMode.PAY_PER_REQUEST,
-      timeToLiveAttribute: 'ttl'
+      timeToLiveAttribute: 'ttl',
+      stream: StreamViewType.NEW_AND_OLD_IMAGES
     });
 
     const errorTopic = new Topic(this, 'ErrorTopic', {
@@ -59,6 +62,11 @@ export class PreparationStack extends cdk.Stack {
       protocol: SubscriptionProtocol.EMAIL,
       endpoint: 'htaushanov@yahoo.com'
     });
+
+    cleanupFunction.addEventSource(new DynamoEventSource(errorTable, {
+      startingPosition: StartingPosition.LATEST,
+      batchSize: 5
+    }));
 
     new cdk.CfnOutput(this, 'RESTApiEndpoint', {
       value: 'https://${api.restApiId}.execute-api.eu-central-1.amazonaws.com/prod/processJSON'
