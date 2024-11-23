@@ -3,6 +3,7 @@ import { LambdaIntegration, RestApi } from 'aws-cdk-lib/aws-apigateway';
 import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { Subscription, SubscriptionProtocol, Topic } from 'aws-cdk-lib/aws-sns';
 import { Construct } from 'constructs';
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 
@@ -28,6 +29,16 @@ export class PreparationStack extends cdk.Stack {
     const api = new RestApi(this, 'ProcessorApi');
     const resource = api.root.addResource('processJASON');
     resource.addMethod('POST', new LambdaIntegration(processFunction));
+
+    const errorTopic = new Topic(this, 'ErrorTopic', {
+      topicName: 'ErrorTopic'
+    });
+
+    new Subscription(this, 'ErrorSubstription', {
+      topic: errorTopic,
+      protocol: SubscriptionProtocol.EMAIL,
+      endpoint: 'htaushanov@yahoo.com'
+    });
 
     new cdk.CfnOutput(this, 'RESTApiEndpoint', {
       value: 'https://${api.restApiId}.execute-api.eu-central-1.amazonaws.com/prod/processJSON'
