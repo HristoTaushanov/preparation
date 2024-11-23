@@ -28,5 +28,9 @@ export class PreparationStack extends cdk.Stack {
     const api = new RestApi(this, 'ProcessorApi');
     const resource = api.root.addResource('processJASON');
     resource.addMethod('POST', new LambdaIntegration(processFunction));
+
+    new cdk.CfnOutput(this, 'RESTApiEndpoint', {
+      value: 'https://${api.restApiId}.execute-api.eu-central-1.amazonaws.com/prod/processJSON'
+    });
   }
 }
