@@ -1,4 +1,4 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 import { PublishCommand, SNSClient } from "@aws-sdk/client-sns";
 
 
@@ -12,6 +12,25 @@ export const handler = async (event: any) => {
 
     if(!event || !event.text){
         // Invalid JSON
+
+        const ttl = Math.floor(Date.now() / 1000) + 30 * 60;
+
+        await dynamoDBClient.send(new PutItemCommand(
+            {
+                TableName: tableName,
+                Item: {
+                    id: {
+                        S: Math.random().toString(),
+                    },
+                    errorMessage: {
+                        S: 'Something is wrong!',
+                    },
+                    ttl: {
+                        N: ttl.toString()
+                    }
+                }
+            }
+        ))
 
     } else {
         // Publish to SNS
