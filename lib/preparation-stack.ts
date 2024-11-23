@@ -33,6 +33,8 @@ export class PreparationStack extends cdk.Stack {
       }
     });
 
+
+    errorTopic.grantPublish(processFunction);
     errorTable.grantReadWriteData(processFunction);
 
     const api = new RestApi(this, 'ProcessorApi');
