@@ -10,7 +10,11 @@ export const handler = async (event: any) => {
     const topicArn = process.env.TOPIC_ARN;
     console.log(event);
 
-    if(!event || !event.text){
+    const body = JSON.parse(event.body);
+    
+    console.log(body);
+
+    if(!event || !body){
         // Invalid JSON
 
         const ttl = Math.floor(Date.now() / 1000) + 30 * 60;
@@ -38,7 +42,8 @@ export const handler = async (event: any) => {
             TopicArn: topicArn,
             Message: `Valid JSON received: ${event.text}`
             }
-        ))
+        ));
+        console.log('Notification sent!')
         
     }
     return {
