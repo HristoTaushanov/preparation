@@ -17,5 +17,6 @@ export class PreparationStack extends cdk.Stack {
     });
 
     const api = new RestApi(this, 'ProcessorApi');
+    const resource = api.root.addResource('processJASON');
   }
 }
