@@ -23,8 +23,13 @@ export class PreparationStack extends cdk.Stack {
     const processFunction = new NodejsFunction(this, 'processFunction', {
       runtime: Runtime.NODEJS_20_X,
       handler: 'handler',
-      entry: '${__dirname}/../src/processFunction.ts'
+      entry: '${__dirname}/../src/processFunction.ts',
+      environment: {
+        TABLE_NAME: errorTable.tableName
+      }
     });
+
+    errorTable.grantReadWriteData(processFunction);
 
     const api = new RestApi(this, 'ProcessorApi');
     const resource = api.root.addResource('processJASON');
