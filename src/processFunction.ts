@@ -14,7 +14,7 @@ export const handler = async (event: any) => {
     
     console.log(body);
 
-    if(!event || !body){
+    if(!body || !body.text){
         // Invalid JSON
 
         const ttl = Math.floor(Date.now() / 1000) + 30 * 60;
