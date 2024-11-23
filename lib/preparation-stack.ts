@@ -19,13 +19,17 @@ export class PreparationStack extends cdk.Stack {
       billingMode: BillingMode.PAY_PER_REQUEST
     });
 
+    const errorTopic = new Topic(this, 'ErrorTopic', {
+      topicName: 'ErrorTopic'
+    });
 
     const processFunction = new NodejsFunction(this, 'processFunction', {
       runtime: Runtime.NODEJS_20_X,
       handler: 'handler',
       entry: '${__dirname}/../src/processFunction.ts',
       environment: {
-        TABLE_NAME: errorTable.tableName
+        TABLE_NAME: errorTable.tableName,
+        TOPIC_ARN: errorTopic.topicArn
       }
     });
 
@@ -34,10 +38,6 @@ export class PreparationStack extends cdk.Stack {
     const api = new RestApi(this, 'ProcessorApi');
     const resource = api.root.addResource('processJASON');
     resource.addMethod('POST', new LambdaIntegration(processFunction));
-
-    const errorTopic = new Topic(this, 'ErrorTopic', {
-      topicName: 'ErrorTopic'
-    });
 
     new Subscription(this, 'ErrorSubstription', {
       topic: errorTopic,
